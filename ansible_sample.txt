@@ -1,61 +1,54 @@
-- name: Deploy Python Application from Git Repository  
-  hosts: localhost  
-  become: true  
-  tasks:  
-    # مرحله ۱: اطمینان از نصب Python  
-    - name: Ensure Python is installed  
-      apt:  
-        name: python3  
-        state: present  
-      when: ansible_os_family == "Debian"  
+- name: Deploy Python Application from Git Repository
+  hosts: localhost
+  become: true
+  tasks:
+    - name: Ensure Python is installed
+      apt:
+        name: python3
+        state: present
+      when: ansible_os_family == "Debian"
 
-    # مرحله ۲: اطمینان از نصب pip  
-    - name: Ensure pip is installed  
-      apt:  
-        name: python3-pip  
-        state: present  
-      when: ansible_os_family == "Debian"  
+    - name: Ensure pip is installed
+      apt:
+        name: python3-pip
+        state: present
+      when: ansible_os_family == "Debian"
 
-    # مرحله ۳: ایجاد دایرکتوری برای اپلیکیشن  
-    - name: Create application directory  
-      file:  
-        path: /opt/my_python_app  
-        state: directory  
+    - name: Create application directory
+      file:
+        path: /opt/my_python_app
+        state: directory
 
-    # مرحله ۴: کلون کردن ریپازیتوری  
-    - name: Clone the Git repository  
-      git:  
-        repo: 'https://your_token@github.com/Mojishoon/DeployOnLinux.git'  
-        dest: /opt/my_python_app  
-        version: master  
-      # در اینجا `your_token` را با توکن واقعی خود جایگزین کنید  
+    - name: Clone the Git repository
+      git:
+        repo: 'https://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@github.com/Mojishoon/DeployOnLinux.git'
+        dest: /opt/my_python_app
+        version: master
 
-    # مرحله ۵: ایجاد فایل سرویس systemd  
-    - name: Create systemd service file  
-      copy:  
-        dest: /etc/systemd/system/my_python_app.service  
-        content: |  
-          [Unit]  
-          Description=My Python Application  
-          After=network.target  
+    - name: Create systemd service file
+      copy:
+        dest: /etc/systemd/system/my_python_app.service
+        content: |
+          [Unit]
+          Description=My Python Application
+          After=network.target
 
-          [Service]  
-          Type=simple  
-          User={{ ansible_ssh_user }}  # استفاده از کاربر فعلی  
-          WorkingDirectory=/opt/my_python_app  
-          ExecStart=/usr/bin/python3 /opt/my_python_app/app.py  
-          Restart=always  
+          [Service]
+          Type=simple
+          User=mojishoon
+          WorkingDirectory=/opt/my_python_app
+          ExecStart=/usr/bin/python3 /opt/my_python_app/app.py
+          Restart=always
 
-          [Install]  
-          WantedBy=multi-user.target  
+          [Install]
+          WantedBy=multi-user.target
 
-    # مرحله ۶: بارگذاری و فعال‌سازی سرویس  
-    - name: Reload systemd  
-      systemd:  
-        daemon_reload: true  
+    - name: Reload systemd
+      systemd:
+        daemon_reload: true
 
-    - name: Start and enable the service  
-      systemd:  
-        name: my_python_app  
-        state: started  
+    - name: Start and enable the service
+      systemd:
+        name: my_python_app
+        state: started
         enabled: yes
