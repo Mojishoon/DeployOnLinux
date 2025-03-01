@@ -4,7 +4,7 @@ After=network.target
 
 [Service]  
 Type=simple  
-User=mojishoon
+User=Mojishoon
 WorkingDirectory=/opt/my_python_app 
 ExecStart=/usr/bin/python3 /opt/my_python_app/app.py 
 Restart=always
